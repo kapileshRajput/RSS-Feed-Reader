@@ -14,6 +14,7 @@ class ParseApplications {
         Log.d(TAG, "parse: called with $xmlData")
         var status = true
         var inEntry = false
+        var gotImage = false
         var textValue = ""
 
         try {
@@ -24,12 +25,18 @@ class ParseApplications {
             var eventType = xpp.eventType
             var curretRecord = FeedEntry()
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                val tagName = xpp.name?.toLowerCase() // ToDo: should your the safe-call operator "?"
+                val tagName =
+                    xpp.name?.toLowerCase() // ToDo: should your the safe-call operator "?"
                 when (eventType) {
                     XmlPullParser.START_TAG -> {
                         Log.d(TAG, "parse: Starting tag for $tagName")
                         if (tagName == "entry") {
                             inEntry = true
+                        } else if ((tagName == "image") && inEntry) {
+                            val imageResolution = xpp.getAttributeValue(null, "height")
+                            if (imageResolution.isNotEmpty()) {
+                                gotImage = imageResolution == "53"
+                            }
                         }
                     }
                     XmlPullParser.TEXT -> textValue = xpp.text
@@ -46,7 +53,9 @@ class ParseApplications {
                                 "artist" -> curretRecord.artist = textValue
                                 "releasedate" -> curretRecord.releaseDate = textValue
                                 "summary" -> curretRecord.summary = textValue
-                                "image" -> curretRecord.imageURL = textValue
+                                "image" -> if (gotImage) {
+                                    curretRecord.imageURL = textValue
+                                }
                             }
                         }
                     }
