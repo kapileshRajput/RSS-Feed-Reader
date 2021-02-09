@@ -14,6 +14,7 @@ import kotlin.properties.Delegates
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
+    private val downloadData by lazy { DownloadData(this, binding.xmlListView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +22,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.d(TAG, "onCreate: called")
 
-        val downloadData = DownloadData(this, binding.xmlListView)
-
         downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml")
         Log.d(TAG, "onCreate: done")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        downloadData.cancel(true)
     }
 
     companion object {
@@ -54,12 +58,14 @@ class MainActivity : AppCompatActivity() {
                 val parseApplications = ParseApplications()
                 parseApplications.parse(result)
 
-                val arrayAdapter = ArrayAdapter<FeedEntry>(
+    /*            val arrayAdapter = ArrayAdapter<FeedEntry>(
                     propContext,
                     R.layout.list_item,
                     parseApplications.applications
                 )
-                propListView.adapter = arrayAdapter
+                propListView.adapter = arrayAdapter*/
+                val feedAdapter = FeedAdapter(propContext, R.layout.list_record, parseApplications.applications)
+                propListView.adapter = feedAdapter
             }
 
             private fun downloadXML(urlPath: String): String {
