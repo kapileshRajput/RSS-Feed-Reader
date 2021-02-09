@@ -4,13 +4,6 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.lang.Exception
-import java.lang.StringBuilder
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
@@ -44,34 +37,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             private fun downloadXML(urlPath: String): String {
-                val xmlResult = StringBuilder()
-                try {
-                    val url = URL(urlPath)
-                    val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-                    val response = connection.responseCode
-                    Log.d(TAG, "downloadXML: The response code was: $response")
-
-
-//                  val stream = connection.inputStream
-                    connection.inputStream.buffered().reader().use {
-                        xmlResult.append(it.readText())
-                    }
-
-                    Log.d(TAG, "downloadXML: Received ${xmlResult.length} bytes")
-                    return xmlResult.toString()
-
-                } catch (e: Exception) {
-                    val errorMessage = when (e) {
-                        is MalformedURLException -> "downloadXML: Invalid URL ${e.message}"
-                        is IOException -> "downdownloadXML: IO Exception reading data: ${e.message}"
-                        is SecurityException -> {
-                            e.printStackTrace()
-                            "downloadXML: SecurityException: Needs permissions? ${e.message}"
-                        }
-                        else -> "downloadXML: Unknown Error: ${e.message}"
-                    }
-                }
-                return ""
+               return URL(urlPath).readText()
             }
         }
     }
