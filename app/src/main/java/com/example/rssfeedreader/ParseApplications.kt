@@ -1,17 +1,13 @@
 package com.example.rssfeedreader
 
-import android.util.Log
-import androidx.core.graphics.createBitmap
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.lang.Exception
 
 class ParseApplications {
-    private val TAG = "ParseApplications"
     val applications = ArrayList<FeedEntry>()
 
     fun parse(xmlData: String): Boolean {
-        Log.d(TAG, "parse: called with $xmlData")
         var status = true
         var inEntry = false
         var gotImage = false
@@ -29,7 +25,6 @@ class ParseApplications {
                     xpp.name?.toLowerCase() // ToDo: should your the safe-call operator "?"
                 when (eventType) {
                     XmlPullParser.START_TAG -> {
-                        Log.d(TAG, "parse: Starting tag for $tagName")
                         if (tagName == "entry") {
                             inEntry = true
                         } else if ((tagName == "image") && inEntry) {
@@ -41,7 +36,6 @@ class ParseApplications {
                     }
                     XmlPullParser.TEXT -> textValue = xpp.text
                     XmlPullParser.END_TAG -> {
-                        Log.d(TAG, "parse: Ending tag for $tagName")
                         if (inEntry) {
                             when (tagName) {
                                 "entry" -> {
@@ -60,13 +54,7 @@ class ParseApplications {
                         }
                     }
                 }
-                // Nothing else to do
                 eventType = xpp.next()
-            }
-
-            for (app in applications) {
-                Log.d(TAG, "parse: *****************************")
-                Log.d(TAG, "parse: ${app}")
             }
         } catch (e: Exception) {
             e.printStackTrace()

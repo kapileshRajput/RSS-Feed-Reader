@@ -5,7 +5,6 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.example.rssfeedreader.databinding.ActivityMainBinding
 import java.net.URL
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.d(TAG, "onCreate: called")
 
-        downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=200/xml")
+        downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
         Log.d(TAG, "onCreate: done")
     }
 
@@ -58,12 +57,6 @@ class MainActivity : AppCompatActivity() {
                 val parseApplications = ParseApplications()
                 parseApplications.parse(result)
 
-    /*            val arrayAdapter = ArrayAdapter<FeedEntry>(
-                    propContext,
-                    R.layout.list_item,
-                    parseApplications.applications
-                )
-                propListView.adapter = arrayAdapter*/
                 val feedAdapter = FeedAdapter(propContext, R.layout.list_record, parseApplications.applications)
                 propListView.adapter = feedAdapter
             }
