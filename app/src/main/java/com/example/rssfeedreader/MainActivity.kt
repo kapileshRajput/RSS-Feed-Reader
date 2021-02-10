@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.d(TAG, "onCreate: called")
 
-        downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=25/xml")
+        downloadData.execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=200/xml")
         Log.d(TAG, "onCreate: done")
     }
 
