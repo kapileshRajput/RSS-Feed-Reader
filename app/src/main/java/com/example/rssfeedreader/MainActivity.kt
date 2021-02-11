@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     private var feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
     private var feedLimit = 10
     private val STATUS_FEED_LIMIT = "FeedLimit"
+    private val STATUS_FEED_URL = "FeedURL"
+    private var feedCachedUrl = "INVALIDATED"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,18 +31,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadUrl(feedUrl: String) {
-        Log.d(TAG, "downloadUrl: Starting AsyncTask")
-        downloadData = DownloadData(this, binding.xmlListView)
-        downloadData?.execute(feedUrl)
-        Log.d(TAG, "downloadUrl: done")
+        if (feedUrl != feedCachedUrl) {
+            Log.d(TAG, "downloadUrl: Starting AsyncTask")
+            downloadData = DownloadData(this, binding.xmlListView)
+            downloadData?.execute(feedUrl)
+            feedCachedUrl = feedUrl
+            Log.d(TAG, "downloadUrl: done")
+        } else {
+            Log.d(TAG, "downloadUrl: URL not changed")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.feeds_menu, menu)
 
-        if(feedLimit == 10){
+        if (feedLimit == 10) {
             menu?.findItem(R.id.mnu10)?.isChecked = true
-        }else{
+        } else {
             menu?.findItem(R.id.mnu25)?.isChecked = true
         }
         return true
@@ -63,6 +70,8 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "onOptionsItemSelected: ${item.title} setting feedlimit unchanged.")
                 }
             }
+            R.id.mnuRefresh ->
+                feedCachedUrl = "INVALIDATED"
             else ->
                 return super.onOptionsItemSelected(item)
         }
@@ -115,10 +124,12 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         feedLimit = savedInstanceState.getInt(STATUS_FEED_LIMIT)
+        feedUrl = savedInstanceState.getString(STATUS_FEED_URL, feedUrl)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(STATUS_FEED_LIMIT, feedLimit)
+        outState.putString(STATUS_FEED_URL, feedUrl)
     }
 }
