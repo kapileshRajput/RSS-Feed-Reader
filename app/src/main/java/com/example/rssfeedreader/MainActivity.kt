@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private var downloadData: DownloadData? = null
     private var feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
     private var feedLimit = 10
+    private val STATUS_FEED_LIMIT = "FeedLimit"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.feeds_menu, menu)
+
+        if(feedLimit == 10){
+            menu?.findItem(R.id.mnu10)?.isChecked = true
+        }else{
+            menu?.findItem(R.id.mnu25)?.isChecked = true
+        }
         return true
     }
 
@@ -105,5 +112,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        feedLimit = savedInstanceState.getInt(STATUS_FEED_LIMIT)
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(STATUS_FEED_LIMIT, feedLimit)
+    }
 }
