@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d(TAG, "onCreate: called")
+        if (savedInstanceState != null){
+            feedUrl = savedInstanceState.getString(STATUS_FEED_URL, feedUrl)
+            feedLimit = savedInstanceState.getInt(STATUS_FEED_LIMIT)
+        }
         downloadUrl(feedUrl.format(feedLimit))
         Log.d(TAG, "onCreate: done")
     }
@@ -119,12 +125,6 @@ class MainActivity : AppCompatActivity() {
                 return URL(urlPath).readText()
             }
         }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        feedLimit = savedInstanceState.getInt(STATUS_FEED_LIMIT)
-        feedUrl = savedInstanceState.getString(STATUS_FEED_URL, feedUrl)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
