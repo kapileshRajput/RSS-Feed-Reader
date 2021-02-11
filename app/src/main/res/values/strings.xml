@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">RSS Feed Reader</string>
+    <string name="free_apps_menu_item">Free Apps</string>
+    <string name="paid_apps_menu_item">Paid Apps</string>
+    <string name="songs_menu_item">Songs</string>
+    <string name="top_10_menu_group_item">Top 10</string>
+    <string name="top_25_menu_group_item">Top 25</string>
 </resources>

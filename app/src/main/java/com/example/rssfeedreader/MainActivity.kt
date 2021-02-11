@@ -16,16 +16,18 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
     private var downloadData: DownloadData? = null
+    private var feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
+    private var feedLimit = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        downloadUrl("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml")
+        downloadUrl(feedUrl.format(feedLimit))
         Log.d(TAG, "onCreate: done")
     }
 
-    private fun downloadUrl(feedUrl: String){
+    private fun downloadUrl(feedUrl: String) {
         Log.d(TAG, "downloadUrl: Starting AsyncTask")
         downloadData = DownloadData(this, binding.xmlListView)
         downloadData?.execute(feedUrl)
@@ -38,18 +40,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val feedUrl: String
         when (item.itemId) {
             R.id.mnuFree ->
-                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
             R.id.mnuPaid ->
-                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=%d/xml"
             R.id.mnuSongs ->
-                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+                feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=%d/xml"
+            R.id.mnu10, R.id.mnu25 -> {
+                if (!item.isChecked) {
+                    item.isChecked = true
+                    feedLimit = 35 - feedLimit
+                    Log.d(TAG, "onOptionsItemSelected: ${item.title} setting feedlimit to $feedLimit")
+                } else {
+                    Log.d(TAG, "onOptionsItemSelected: ${item.title} setting feedlimit unchanged.")
+                }
+            }
             else ->
                 return super.onOptionsItemSelected(item)
         }
-        downloadUrl(feedUrl)
+        downloadUrl(feedUrl.format(feedLimit))
         return true
     }
 
